@@ -1,94 +1,94 @@
 algorithms:
-    LogisticRegression():
-        param_grid:
-            C:
-                - 1.0e-05
-                - 0.0001
-                - 0.001
-                - 0.01
-                - 0.1
-                - 1
-                - 10
-                - 100
-                - 1000
-            max_iter:
-                - 50
-                - 100
-                - 500
-                - 1500
-                - 5000
-            penalty:
-                - none
-                - l1
-                - l2
-                - elasticnet
-            solver:
-                - newton-cg
-                - lbfgs
-                - liblinear
-                - sag
-                - saga
-        param_results:
-            accuracy: 0.980952380952381
-            params:
-                C: 1
-                max_iter: 500
-                penalty: l2
-                solver: saga
-    RandomForestClassifier():
-        param_grid:
-            max_depth:
-                - 10
-                - 20
-                - 60
-                - 100
-                - None
-            max_features:
-                - auto
-                - sqrt
-                - log2
-            n_estimators:
-                - 10
-                - 100
-                - 500
-                - 1000
-            n_jobs:
-                - -1
-        param_results:
-            accuracy: 0.9428571428571428
-            params:
-                max_depth: 10
-                max_features: auto
-                n_estimators: 100
-                n_jobs: -1
-    SVC():
-        param_grid:
-            C:
-                - 1.0e-05
-                - 0.0001
-                - 0.001
-                - 0.01
-                - 0.1
-                - 1
-                - 10
-                - 100
-                - 1000
-            gamma:
-                - scale
-                - auto
-                - 1
-                - 0.1
-                - 0.01
-                - 0.001
-                - 0.0001
-            kernel:
-                - linear
-                - poly
-                - rbf
-                - sigmoid
-        param_results:
-            accuracy: 0.9714285714285715
-            params:
-                C: 1
-                gamma: scale
-                kernel: poly
+  LogisticRegression():
+    param_grid:
+      C:
+      - 1.0e-05
+      - 0.0001
+      - 0.001
+      - 0.01
+      - 0.1
+      - 1
+      - 10
+      - 100
+      - 1000
+      max_iter:
+      - 50
+      - 100
+      - 500
+      - 1500
+      - 5000
+      penalty:
+      - none
+      - l1
+      - l2
+      - elasticnet
+      solver:
+      - newton-cg
+      - lbfgs
+      - liblinear
+      - sag
+      - saga
+    param_results:
+      accuracy: 0.980952380952381
+      params:
+        C: 1
+        max_iter: 500
+        penalty: l2
+        solver: saga
+  RandomForestClassifier():
+    param_grid:
+      max_depth:
+      - 10
+      - 20
+      - 60
+      - 100
+      - None
+      max_features:
+      - auto
+      - sqrt
+      - log2
+      n_estimators:
+      - 10
+      - 100
+      - 500
+      - 1000
+      n_jobs:
+      - -1
+    param_results:
+      accuracy: 0.9523809523809523
+      params:
+        max_depth: 60
+        max_features: sqrt
+        n_estimators: 10
+        n_jobs: -1
+  SVC():
+    param_grid:
+      C:
+      - 1.0e-05
+      - 0.0001
+      - 0.001
+      - 0.01
+      - 0.1
+      - 1
+      - 10
+      - 100
+      - 1000
+      gamma:
+      - scale
+      - auto
+      - 1
+      - 0.1
+      - 0.01
+      - 0.001
+      - 0.0001
+      kernel:
+      - linear
+      - poly
+      - rbf
+      - sigmoid
+    param_results:
+      accuracy: 0.9714285714285715
+      params:
+        C: 1
+        gamma: scale
+        kernel: poly

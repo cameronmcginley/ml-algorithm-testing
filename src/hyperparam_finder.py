@@ -1,20 +1,36 @@
+"""Algorithm optimal hyperparameter finding.
+
+This script reads in the data of models/algorithms from
+algorithms/algorithms.yml and performs hyperparameter testing. The
+best params, along with the accuracy obtained, are printed back
+into algorithms.yml under 'param_results' for each algorithm
+"""
+
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
 
 # Models used
-from sklearn.linear_model import LogisticRegression
-from sklearn.svm import SVC
-from sklearn.ensemble import RandomForestClassifier
-
-# Ignore the sklearn warnings when using gridsearch
-from sklearn.utils._testing import ignore_warnings
-
+from sklearn.linear_model import LogisticRegression  # noqa, expected unused
+from sklearn.svm import SVC  # noqa
+from sklearn.ensemble import RandomForestClassifier  # noqa
 import yaml
-from yaml import CLoader as Loader, CDumper as Dumper
+
+from pathlib import Path
 
 
-def main():
+def find_hyperparams(algorithmsyml_path: str) -> None:
+    """Run GridSeachCV on models stored in algorithms/algorithms.yml.
+
+    This func reads in the data of models/algorithms from
+    algorithms/algorithms.yml and performs hyperparameter testing. The
+    best params, along with the accuracy obtained, are printed back
+    into algorithms.yml under 'param_results' for each algorithm
+
+    Args:
+        algorithmsyml_path: File path to algorithms.yml
+
+    """
     iris = datasets.load_iris()
 
     X_train, X_test, y_train, y_test = train_test_split(
@@ -23,11 +39,12 @@ def main():
 
     # Use GridSearchCV to find optimal hyperparameters for the models
 
-    # For the three classifiers we use LogisticRegression, SVC, and RandomForestClassifier
+    # For the three classifiers we use LogisticRegression, SVC, and
+    # RandomForestClassifier
 
     # Read in our models and param_grids defined in the yaml
-    with open("../algorithms/algorithms.yml", "r") as file:
-        data = yaml.load(file, Loader=Loader)
+    with open(algorithmsyml_path, "r") as file:
+        data = yaml.safe_load(file)
 
     # For each model in the yaml, grid search against it's param
     # grid and output the results back into the yaml under 'param_results'
@@ -55,9 +72,15 @@ def main():
             "accuracy": float(results.best_score_),
             "params": results.best_params_,
         }
-        with open("../algorithms/algorithms.yml", "w") as file:
+        with open(algorithmsyml_path, "w") as file:
             yaml.dump(data, file)
 
 
 if __name__ == "__main__":
-    main()
+    # Get algorithms.yml
+    base_path = Path(__file__).parent
+    algorithmsyml_path = (base_path / "../algorithms/algorithms.yml").resolve()
+
+    # Find hyperparams for every model in algorithms.yml
+    # Output results back to same yaml
+    find_hyperparams(algorithmsyml_path)
