@@ -10,6 +10,9 @@ from sklearn.ensemble import RandomForestClassifier
 # Ignore the sklearn warnings when using gridsearch
 from sklearn.utils._testing import ignore_warnings
 
+import yaml
+from yaml import CLoader as Loader, CDumper as Dumper
+
 
 def main():
     iris = datasets.load_iris()
@@ -22,42 +25,19 @@ def main():
 
     # For the three classifiers we use LogisticRegression, SVC, and RandomForestClassifier
 
-    # Define the models along with paramaters to search
-    models = [
-        {
-            "type": LogisticRegression(),
-            "param_grid": {
-                "solver": ["newton-cg", "lbfgs", "liblinear", "sag", "saga"],
-                "penalty": ["none", "l1", "l2", "elasticnet"],
-                "C": [1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1, 10, 100, 1000],
-                "max_iter": [50, 100, 500, 1500, 5000],
-            },
-        },
-        {
-            "type": SVC(),
-            "param_grid": {
-                "C": [1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1, 10, 100, 1000],
-                "gamma": ["scale", "auto", 1, 0.1, 0.01, 0.001, 0.0001],
-                "kernel": ["linear", "poly", "rbf", "sigmoid"],
-            },
-        },
-        {
-            "type": RandomForestClassifier(),
-            "param_grid": {
-                "n_estimators": [10, 100, 500, 1000],
-                "max_features": ["auto", "sqrt", "log2"],
-                "max_depth": [10, 20, 60, 100, None],
-                "n_jobs": [-1],
-            },
-        },
-    ]
+    # Read in our models and param_grids defined in the yaml
+    with open("../algorithms/algorithms.yml", "r") as file:
+        data = yaml.load(file, Loader=Loader)
 
-    for model in models:
+    # For each model in the yaml, grid search against it's param
+    # grid and output the results back into the yaml under 'param_results'
+    for model_func in data["algorithms"]:
         # Grid search runs through combinations of the given hyperparams and
         # returns the params with the best accuracy found
         clf = GridSearchCV(
-            model["type"],
-            model["param_grid"],
+            # Key of each model is function ref string, eval it
+            estimator=eval(model_func),
+            param_grid=data["algorithms"][model_func]["param_grid"],
             scoring="accuracy",
             n_jobs=-1,
         )
@@ -70,11 +50,13 @@ def main():
         print("Best Score: %s" % results.best_score_)
         print("Best Hyperparameters: %s" % results.best_params_)
 
-        # Add results to the dictionary
-        model["param_results"] = {
-            "accuracy": results.best_score_,
+        # Add results to the dictionary, then output to yaml
+        data["algorithms"][model_func]["param_results"] = {
+            "accuracy": float(results.best_score_),
             "params": results.best_params_,
         }
+        with open("../algorithms/algorithms.yml", "w") as file:
+            yaml.dump(data, file)
 
 
 if __name__ == "__main__":
