@@ -1,8 +1,16 @@
+"""Print classifier scores as a table."""
+
 from tabulate import tabulate
 
-# Helper Func - Cross Validation Score Printing
-# Input: object returned from cross_validate()
-def cv_score_print(scores):
+
+def cv_score_print(scores: dict[str, float]) -> None:
+    """Print classifier scores as a table.
+
+    Args:
+        scores: contains test_accuracy, test_precision_macro,
+            test_recall_macro, test_f1_macro, fit_time
+
+    """
     # Convert fit times to ms
     for i in range(len(scores["fit_time"])):
         scores["fit_time"][i] *= 1000

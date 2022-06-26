@@ -1,24 +1,32 @@
-# Logistic Regression
-# Despite max_iter warnings, 500 iter was found to be best by grid search
+"""Prints performance statistics and graph for LogisticRegression().
 
+This script takes model paramaters found in model_params.yml, and tests
+against them for accuracy, precision, recall, f1. The decision region
+is graphed with PCA dimensionality reduction
+"""
 
-# # Prints decision region (dimensionality reduced)
-# print_decision_region(log_reg)
-from yaml import safe_load, safe_dump
+from yaml import safe_load
 from pathlib import Path
 from sklearn import datasets
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split, cross_validate
 from cv_score_print import cv_score_print
-from sklearn.metrics import (
-    accuracy_score,
-    confusion_matrix,
-    classification_report,
-)
 from print_decision_region import print_decision_region
+from typing import Any
 
 
-def run(dataset, params):
+def test_logistic_regression(dataset: Any, params: dict[str, Any]) -> None:
+    """Prints performance statistics and graph for LogisticRegression().
+
+    This function takes model paramaters found in model_params.yml, and tests
+    against them for accuracy, precision, recall, f1. The decision region
+    is graphed with PCA dimensionality reduction
+
+    Args:
+        dataset (sklearn dataset): dataset, with "data" and "target"
+        params: model parameters dict defined in model_params.yml
+
+    """
     X_train, X_test, y_train, y_test = train_test_split(
         dataset["data"], dataset["target"], test_size=0.3, random_state=42
     )
@@ -32,7 +40,8 @@ def run(dataset, params):
         max_iter=params["max_iter"],
     )
 
-    # Use macro for multi class scoring - computes score for each class, then averages with classes unweighted
+    # Use macro for multi class scoring - computes score for each class,
+    #  then averages with classes unweighted
     scores = cross_validate(
         log_reg,
         dataset["data"],
@@ -41,25 +50,7 @@ def run(dataset, params):
         scoring=("accuracy", "precision_macro", "recall_macro", "f1_macro"),
     )
 
-    # Print table of scores
     cv_score_print(scores)
-
-    # Just test against the testing sets
-    print(
-        "\n\n-----------------------------------------------------\n\n30% Testing Set:"
-    )
-    # Uses hyperparams found by grid search
-    log_reg = LogisticRegression(
-        C=1, penalty="l2", solver="saga", max_iter=500
-    )
-    log_reg.fit(X_train, y_train)
-    y_pred = log_reg.predict(X_test)
-
-    print("Accuracy:", accuracy_score(y_test, y_pred))
-    print("\nConfusion matrix:\n", confusion_matrix(y_test, y_pred))
-    print("\nClassification report:\n", classification_report(y_test, y_pred))
-
-    # Prints decision region (dimensionality reduced)
     print_decision_region(log_reg, dataset, X_train, X_test, y_train, y_test)
 
 
@@ -76,14 +67,9 @@ def main() -> None:
         "params"
     ]
 
-    # Get dataset
     iris = datasets.load_iris()
 
-    run(iris, model_params)
-
-    # Find hyperparams for every model in model_defns.yml
-    # Output results back to same yaml
-    # find_hyperparams(model_defns_path, model_params_path, X_train, y_train)
+    test_logistic_regression(iris, model_params)
 
 
 if __name__ == "__main__":
