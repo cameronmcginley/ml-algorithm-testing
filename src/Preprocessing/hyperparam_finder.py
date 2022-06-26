@@ -78,7 +78,9 @@ def main() -> None:
     """Handle getting required info for and executing find_hyperparams()."""
     # Get yaml paths for input (defns) and output (params)
     base_path = Path(__file__).parent
-    model_defns_path = (base_path / "../algorithms/model_defns.yml").resolve()
+    model_defns_path = (
+        base_path / "../../algorithms/model_defns.yml"
+    ).resolve()
     model_params_path = (
         base_path / "../../algorithms/model_params.yml"
     ).resolve()

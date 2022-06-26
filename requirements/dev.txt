@@ -1,0 +1,6 @@
+# Dev only requirements, installs common also
+-r common.txt
+black==22.3.0
+flake8==4.0.1
+flake8-annotations==2.9.0
+flake8-docstrings==1.6.0

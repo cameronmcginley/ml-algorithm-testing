@@ -9,9 +9,9 @@ algorithms:
         solver: saga
   RandomForestClassifier():
     params:
-      accuracy: 0.9523809523809523
+      accuracy: 0.9428571428571428
       params:
-        max_depth: 60
+        max_depth: 10
         max_features: auto
         n_estimators: 10
         n_jobs: -1
