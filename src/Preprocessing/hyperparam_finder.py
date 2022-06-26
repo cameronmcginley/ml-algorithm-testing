@@ -80,7 +80,7 @@ def main() -> None:
     base_path = Path(__file__).parent
     model_defns_path = (base_path / "../algorithms/model_defns.yml").resolve()
     model_params_path = (
-        base_path / "../algorithms/model_params.yml"
+        base_path / "../../algorithms/model_params.yml"
     ).resolve()
 
     # Get dataset

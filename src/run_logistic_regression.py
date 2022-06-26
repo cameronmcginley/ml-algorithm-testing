@@ -10,8 +10,8 @@ from pathlib import Path
 from sklearn import datasets
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split, cross_validate
-from cv_score_print import cv_score_print
-from print_decision_region import print_decision_region
+from Helpers.cv_score_print import cv_score_print
+from Helpers.print_decision_region import print_decision_region
 from typing import Any
 
 
