@@ -15,6 +15,7 @@ from sklearn.metrics import (
     confusion_matrix,
     classification_report,
 )
+from print_decision_region import print_decision_region
 
 
 def run(dataset, params):
@@ -57,6 +58,9 @@ def run(dataset, params):
     print("Accuracy:", accuracy_score(y_test, y_pred))
     print("\nConfusion matrix:\n", confusion_matrix(y_test, y_pred))
     print("\nClassification report:\n", classification_report(y_test, y_pred))
+
+    # Prints decision region (dimensionality reduced)
+    print_decision_region(log_reg, dataset, X_train, X_test, y_train, y_test)
 
 
 def main() -> None:
