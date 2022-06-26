@@ -1,9 +1,9 @@
 """Algorithm optimal hyperparameter finding.
 
 This script reads in the data of models/algorithms from
-algorithms/algorithms.yml and performs hyperparameter testing. The
+algorithms/model_defns.yml and performs hyperparameter testing. The
 best params, along with the accuracy obtained, are printed back
-into algorithms.yml under 'param_results' for each algorithm
+into model_params.yml for each algorithm
 """
 
 from numpy import ndarray
@@ -20,14 +20,17 @@ from sklearn.ensemble import RandomForestClassifier  # noqa
 
 
 def find_hyperparams(
-    algorithmsyml_path: str, X_train: ndarray, y_train: ndarray
+    model_defns_path: str,
+    model_params_path: str,
+    X_train: ndarray,
+    y_train: ndarray,
 ) -> None:
-    """Run GridSeachCV on models stored in algorithms/algorithms.yml.
+    """Run GridSeachCV on models stored in algorithms/model_defns.yml.
 
     This func reads in the data of models/algorithms from
-    algorithms/algorithms.yml and performs hyperparameter testing. The
+    algorithms/model_defns.yml and performs hyperparameter testing. The
     best params, along with the accuracy obtained, are printed back
-    into algorithms.yml under 'param_results' for each algorithm
+    into model_params.yml for each algorithm
 
     Args:
         algorithmsyml_path: File path to algorithms.yml
@@ -36,11 +39,11 @@ def find_hyperparams(
 
     """
     # Read in our models and param_grids defined in the yaml
-    with open(algorithmsyml_path, "r") as file:
+    with open(model_defns_path, "r") as file:
         data = safe_load(file)
 
     # For each model in the yaml, grid search against it's param
-    # grid and output the results back into the yaml under 'param_results'
+    # grid and output the results into results yaml under 'params'
     for model_func in data["algorithms"]:
         # Grid search runs through combinations of the given hyperparams and
         # returns the params with the best accuracy found
@@ -61,19 +64,24 @@ def find_hyperparams(
         print(f"Best Hyperparameters: {results.best_params_}")
 
         # Add results to the dictionary, then output to yaml
-        data["algorithms"][model_func]["param_results"] = {
+        data["algorithms"][model_func]["params"] = {
             "accuracy": float(results.best_score_),
             "params": results.best_params_,
         }
-        with open(algorithmsyml_path, "w") as file:
+        # Delete the param_grid for the results file
+        del data["algorithms"][model_func]["param_grid"]
+        with open(model_params_path, "w") as file:
             safe_dump(data, file)
 
 
 def main() -> None:
     """Handle getting required info for and executing find_hyperparams()."""
-    # Get algorithms.yml path
+    # Get yaml paths for input (defns) and output (params)
     base_path = Path(__file__).parent
-    algorithmsyml_path = (base_path / "../algorithms/algorithms.yml").resolve()
+    model_defns_path = (base_path / "../algorithms/model_defns.yml").resolve()
+    model_params_path = (
+        base_path / "../algorithms/model_params.yml"
+    ).resolve()
 
     # Get dataset
     iris = datasets.load_iris()
@@ -81,9 +89,9 @@ def main() -> None:
         iris["data"], iris["target"], test_size=0.3, random_state=42
     )
 
-    # Find hyperparams for every model in algorithms.yml
+    # Find hyperparams for every model in model_defns.yml
     # Output results back to same yaml
-    find_hyperparams(algorithmsyml_path, X_train, y_train)
+    find_hyperparams(model_defns_path, model_params_path, X_train, y_train)
 
 
 if __name__ == "__main__":
